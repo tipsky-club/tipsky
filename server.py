@@ -1,4 +1,5 @@
 from flask import Flask, request
+import json
 
 app = Flask(__name__)
 
@@ -6,4 +7,7 @@ app = Flask(__name__)
 def hello_world():
     heim = request.args.get('heim')
     gast = request.args.get('gast')
-    return 'Es spielt ' + heim + " gegen " + gast
+
+    res=[heim, gast]
+    res_a = {"a": res, "b": res}
+    return json.dumps(res_a)
