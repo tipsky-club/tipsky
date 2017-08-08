@@ -10,7 +10,8 @@ so the number of games that went lost and won at home (or away) in the current s
 The last steps considers the results of the last three games of both teams to check if there is a run visible. The
 result of each step (one of the integer values 1, 0 or -1) is taken as a hint regarding the outcome of the match. All
 hints are offset and their result represents the estimated outcome of the match. It can either be positive (home team
-wins), negative (guest team wins) or zero (tie). (...) In the second phase, the result of the match is guessed.
+wins), negative (guest team wins) or zero (tie).
+In the second phase, the result of the match is guessed.
 '''
 
 #This function compares the table ranks of two teams
@@ -66,6 +67,32 @@ def compare_runs(h_matches, g_matches):
     else:
         return 0
 
+#This function guesses an end result for a match
+def guessResult(h_matches, g_matches, outcome):
+    possibleResults = {}
+
+    if outcome == 1:
+        possibleResults = {(1,0): 0.0, (2,0): 0.0, (2,1): 0.0, (3,0): 0.0, (3,1): 0.0, (3,2): 0.0}
+    elif outcome == 0:
+        possibleResults = {(0,0): 0.0, (1,1): 0.0, (2,2): 0.0}
+    else:
+        possibleResults = {(0,1): 0.0, (0,2): 0.0, (1,2): 0.0, (0,3): 0.0, (1,3): 0.0, (2,3): 0.0}
+
+    h_shot_goals = h_matches[0][0] + h_matches[1][0] + h_matches[2][0]
+
+    if h_shot_goals % 3 == 0:
+        for result in possibleResults:
+            if int(h_shot_goals) == result[0]:
+                possibleResults[result] += 1
+    else:
+        frac_digits = h_shot_goals - int(h_shot_goals)
+
+        for result in possibleResults:
+            if int(h_shot_goals) == result[0]:
+                possibleResults[result] += int(h_shot_goals) + 1 - h_shot_goals
+            elif int(h_shot_goals) + 1 == result[0]:
+                possibleResults[result] += h_shot_goals - int(h_shot_goals)
+
 if __name__ == '__main__':
     #We need two teams that play against each other (Later the names of the teams are given as an input to the program.
     #For now we define them here) TODO: Change this!
@@ -85,5 +112,12 @@ if __name__ == '__main__':
     #The same we do for the last three matches' end results ATTENTION: Results always habe to be from home or away teams
     #point of view!
     h_matches = ((0,2), (0,2), (0,2))
+    g_matches = ((0,2), (0,2), (0,2))
 
-    print(decode_run(h_matches))
+    for i in (0,2), (0,1), (0,0), (1,0), (2,0):
+        for j in (0, 2), (0, 1), (0, 0), (1, 0), (2, 0):
+            for k in (0, 2), (0, 1), (0, 0), (1, 0), (2, 0):
+                for l in (0, 2), (0, 1), (0, 0), (1, 0), (2, 0):
+                    for m in (0, 2), (0, 1), (0, 0), (1, 0), (2, 0):
+                        for n in (0, 2), (0, 1), (0, 0), (1, 0), (2, 0):
+                            print((i,j,k), ",", (l,m,n), ": ", compare_runs((i,j,k), (l,m,n)))
