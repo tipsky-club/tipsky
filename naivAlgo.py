@@ -71,14 +71,40 @@ def compare_runs(h_matches, g_matches):
 def guessResult(h_matches, g_matches, outcome):
     possibleResults = {}
 
-    if outcome == 1:
-        possibleResults = {(1,0): 0.0, (2,0): 0.0, (2,1): 0.0, (3,0): 0.0, (3,1): 0.0, (3,2): 0.0}
-    elif outcome == 0:
-        possibleResults = {(0,0): 0.0, (1,1): 0.0, (2,2): 0.0}
+    #Depending on the predicted outcome diffent results are possible
+    if outcome == 0:
+        possibleResults = {(0, 0): 0.0, (1, 1): 0.0, (2, 2): 0.0}
     else:
-        possibleResults = {(0,1): 0.0, (0,2): 0.0, (1,2): 0.0, (0,3): 0.0, (1,3): 0.0, (2,3): 0.0}
+        possibleResults = {(1, 0): 0.0, (2, 0): 0.0, (2, 1): 0.0, (3, 0): 0.0, (3, 1): 0.0, (3, 2): 0.0}
 
-    h_shot_goals = h_matches[0][0] + h_matches[1][0] + h_matches[2][0]
+    h_avg_shot_goals = (h_matches[0][0] + h_matches[1][0] + h_matches[2][0]) / 3
+    h_avg_got_goals = (h_matches[0][1] + h_matches[1][1] + h_matches[2][1]) / 3
+    g_avg_shot_goals = (g_matches[0][0] + g_matches[1][0] + g_matches[2][0]) / 3
+    g_avg_got_goals = (g_matches[0][1] + g_matches[1][1] + g_matches[2][1]) / 3
+
+    avg_goals = ((h_avg_shot_goals, g_avg_got_goals), (h_avg_got_goals, g_avg_shot_goals))
+
+    if outcome == -1:
+        avg_goals = ((h_avg_got_goals, g_avg_shot_goals), (h_avg_shot_goals, g_avg_got_goals))
+
+    #Estimate winning teams goals
+    for goals in avg_goals[0]:
+        if goals >= 3 and outcome != 0:
+            possibleResults[(3,0)] += 1.0
+            possibleResults[(3,1)] += 1.0
+            possibleResults[(3,2)] += 1.0
+        elif goals >= 2 and outcome == 0:
+            possibleResults[(2, 2)] += 1.0
+        else:
+            if goals >= 2:
+                possibleResults[(3,0)] += goals - int(goals)
+                possibleResults[(3,1)] += goals - int(goals)
+                possibleResults[(3,2)] += goals - int(goals)
+                possibleResults[(2,0)] += int(goals) - goals + 1
+                possibleResults[(2,1)] += int(goals) - goals + 1
+            elif goals >= 1:
+                
+
 
     if h_shot_goals % 3 == 0:
         for result in possibleResults:
