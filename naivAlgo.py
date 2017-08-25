@@ -152,9 +152,11 @@ def guessResult(h_matches, g_matches, outcome):
                 possibleResults[(2, 0)] += 1.0
                 possibleResults[(1, 0)] += 1.0
 
-    max(possibleResults.items(), )
+    #max(possibleResults.items(), )
     if outcome == 1:
-        return
+        return 1
+    else:
+        return 2
 
                 # for i in range(4, -1):
     #     for j in range(2):
