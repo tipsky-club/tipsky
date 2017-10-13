@@ -15,7 +15,8 @@ wins), negative (guest team wins) or zero (tie).
 In the second phase, the result of the match is guessed.
 '''
 
-#This function compares the table ranks of two teams
+
+# This function compares the table ranks of two teams
 def compare_table_pos(h_rank, g_rank):
     delta = h_rank - g_rank
 
@@ -26,7 +27,8 @@ def compare_table_pos(h_rank, g_rank):
     else:
         return 0
 
-#This function compares the strengths of the teams at home or away
+
+# This function compares the strengths of the teams at home or away
 def compare_home_away_strengths(h_wins, h_losses, g_wins, g_losses):
     h_strength = h_wins - h_losses
     g_strength = g_wins - g_losses
@@ -38,7 +40,8 @@ def compare_home_away_strengths(h_wins, h_losses, g_wins, g_losses):
     else:
         return -1
 
-#This function decodes runs from matches' end results
+
+# This function decodes runs from matches' end results
 def decode_run(matches):
     run = 0
 
@@ -56,7 +59,8 @@ def decode_run(matches):
 
     return run
 
-#This function compares possible runs of both teams during the last three games
+
+# This function compares possible runs of both teams during the last three games
 # TODO: I am not quite sure if this is what I actually wanted...
 def compare_runs(h_matches, g_matches):
     delta_runs = decode_run(h_matches) - decode_run(g_matches)
@@ -68,7 +72,8 @@ def compare_runs(h_matches, g_matches):
     else:
         return 0
 
-#This function guesses an end result for a match
+
+# This function guesses an end result for a match
 def guessResult(h_matches, g_matches, outcome):
     possibleResults = {}
 
@@ -77,12 +82,13 @@ def guessResult(h_matches, g_matches, outcome):
     g_avg_shot_goals = (g_matches[0][0] + g_matches[1][0] + g_matches[2][0]) / 3
     g_avg_got_goals = (g_matches[0][1] + g_matches[1][1] + g_matches[2][1]) / 3
 
-    avg_goals = [h_avg_shot_goals, h_avg_got_goals, g_avg_shot_goals, g_avg_got_goals]#((h_avg_shot_goals, g_avg_got_goals), (h_avg_got_goals, g_avg_shot_goals))
+    avg_goals = [h_avg_shot_goals, h_avg_got_goals, g_avg_shot_goals,
+                 g_avg_got_goals]  # ((h_avg_shot_goals, g_avg_got_goals), (h_avg_got_goals, g_avg_shot_goals))
 
     # if outcome == -1:
     #     avg_goals = ((h_avg_got_goals, g_avg_shot_goals), (h_avg_shot_goals, g_avg_got_goals))
 
-    #Depending on the predicted outcome diffent results are possible
+    # Depending on the predicted outcome diffent results are possible
     if outcome == 0:
         possibleResults = {(0, 0): 0.0, (1, 1): 0.0, (2, 2): 0.0}
 
@@ -153,73 +159,75 @@ def guessResult(h_matches, g_matches, outcome):
                 possibleResults[(2, 0)] += 1.0
                 possibleResults[(1, 0)] += 1.0
 
-    #max(possibleResults.items(), )
+    # max(possibleResults.items(), )
     if outcome == 1:
         return 1
     else:
         return 2
 
-                # for i in range(4, -1):
-    #     for j in range(2):
-    #         if avg_goals[0][j] > i:
-    #             for res in possibleResults:
-    #                 if res[0] == i and i == 3:
-    #                     possibleResults[res] += 1.0
-    #                 elif res[0] == i:
-    #                     possibleResults[res] +=
-    #                 elif res[0] == i + 1:
-    #                     possibleResults
-    #         elif avg_goals[0][j] == i:
-    #
-    # #Estimate winning teams goals
-    # for goals in avg_goals[0]:
-    #     if goals >= 3 and outcome != 0:
-    #         possibleResults[(3,0)] += 1.0
-    #         possibleResults[(3,1)] += 1.0
-    #         possibleResults[(3,2)] += 1.0
-    #     elif goals >= 2 and outcome == 0:
-    #         possibleResults[(2, 2)] += 1.0
-    #     else:
-    #         if goals >= 2:
-    #             possibleResults[(3,0)] += goals - int(goals)
-    #             possibleResults[(3,1)] += goals - int(goals)
-    #             possibleResults[(3,2)] += goals - int(goals)
-    #             possibleResults[(2,0)] += int(goals) - goals + 1
-    #             possibleResults[(2,1)] += int(goals) - goals + 1
-    #         elif goals >= 1:
-    #
-    #
-    #
-    # if h_shot_goals % 3 == 0:
-    #     for result in possibleResults:
-    #         if int(h_shot_goals) == result[0]:
-    #             possibleResults[result] += 1
-    # else:
-    #     frac_digits = h_shot_goals - int(h_shot_goals)
-    #
-    #     for result in possibleResults:
-    #         if int(h_shot_goals) == result[0]:
-    #             possibleResults[result] += int(h_shot_goals) + 1 - h_shot_goals
-    #         elif int(h_shot_goals) + 1 == result[0]:
-    #             possibleResults[result] += h_shot_goals - int(h_shot_goals)
+        # for i in range(4, -1):
+        #     for j in range(2):
+        #         if avg_goals[0][j] > i:
+        #             for res in possibleResults:
+        #                 if res[0] == i and i == 3:
+        #                     possibleResults[res] += 1.0
+        #                 elif res[0] == i:
+        #                     possibleResults[res] +=
+        #                 elif res[0] == i + 1:
+        #                     possibleResults
+        #         elif avg_goals[0][j] == i:
+        #
+        # #Estimate winning teams goals
+        # for goals in avg_goals[0]:
+        #     if goals >= 3 and outcome != 0:
+        #         possibleResults[(3,0)] += 1.0
+        #         possibleResults[(3,1)] += 1.0
+        #         possibleResults[(3,2)] += 1.0
+        #     elif goals >= 2 and outcome == 0:
+        #         possibleResults[(2, 2)] += 1.0
+        #     else:
+        #         if goals >= 2:
+        #             possibleResults[(3,0)] += goals - int(goals)
+        #             possibleResults[(3,1)] += goals - int(goals)
+        #             possibleResults[(3,2)] += goals - int(goals)
+        #             possibleResults[(2,0)] += int(goals) - goals + 1
+        #             possibleResults[(2,1)] += int(goals) - goals + 1
+        #         elif goals >= 1:
+        #
+        #
+        #
+        # if h_shot_goals % 3 == 0:
+        #     for result in possibleResults:
+        #         if int(h_shot_goals) == result[0]:
+        #             possibleResults[result] += 1
+        # else:
+        #     frac_digits = h_shot_goals - int(h_shot_goals)
+        #
+        #     for result in possibleResults:
+        #         if int(h_shot_goals) == result[0]:
+        #             possibleResults[result] += int(h_shot_goals) + 1 - h_shot_goals
+        #         elif int(h_shot_goals) + 1 == result[0]:
+        #             possibleResults[result] += h_shot_goals - int(h_shot_goals)
 
-#This function estimates the outcome of a match
+
+# This function estimates the outcome of a match
 def compute_outcome(h_team, g_team, h_rank, g_rank, h_wins, h_losses, g_wins, g_losses, h_matches, g_matches):
-    return 
+    return
+
 
 if __name__ == '__main__':
-    #We need two teams that play against each other (Later the names of the teams are given as an input to the program.
-    #For now we define them here) TODO: Change this!
+    # We need two teams that play against each other (Later the names of the teams are given as an input to the program.
+    # For now we define them here) TODO: Change this!
     api.init()
     h_team = "Bayern"
     g_team = "Borussia Dortmund"
 
-    #The same we do for their table rank
+    # The same we do for their table rank
     h_rank = api.get_rank(h_team)
     g_rank = api.get_rank(g_team)
 
     print("Ranks: ", h_rank, g_rank)
-    #The same we do for home and away wins and losses
+    # The same we do for home and away wins and losses
     h_wins = api.get_games_won(h_team, True)
     h_losses = api.get
     g_wins = api.get_games_won(g_team, False)
@@ -227,13 +235,14 @@ if __name__ == '__main__':
 
     print("Ranks: ", h_wins, h_losses, g_wins, g_losses)
 
-    #The same we do for the last three matches' end results ATTENTION: Results always habe to be from home or away teams
-    #point of view!
+    # The same we do for the last three matches' end results ATTENTION: Results always habe to be from home or away teams
+    # point of view!
     h_matches = api.get_last_three_games(h_team)
     g_matches = api.get_last_three_games(g_team)
 
-
     print("Matches ", h_matches, g_matches)
-    result = compare_table_pos(h_rank, g_rank) + compare_home_away_strengths(h_wins, h_losses, g_wins, g_losses) + compare_runs(h_matches, g_matches)
+    result = compare_table_pos(h_rank, g_rank) + compare_home_away_strengths(h_wins, h_losses, g_wins,
+                                                                             g_losses) + compare_runs(h_matches,
+                                                                                                      g_matches)
 
     print("Result ", result)
