@@ -1,4 +1,5 @@
 import random
+import api_connector as api
 
 '''
 This file contains the first naive algorithm.
@@ -209,21 +210,31 @@ def compute_outcome(h_team, g_team, h_rank, g_rank, h_wins, h_losses, g_wins, g_
 if __name__ == '__main__':
     #We need two teams that play against each other (Later the names of the teams are given as an input to the program.
     #For now we define them here) TODO: Change this!
-    h_team = "FC Bayern"
+    api.init()
+    h_team = "Bayern"
     g_team = "Borussia Dortmund"
 
     #The same we do for their table rank
-    h_rank = 5
-    g_rank = 9
+    h_rank = api.get_rank(h_team)
+    g_rank = api.get_rank(g_team)
 
+    print("Ranks: ", h_rank, g_rank)
     #The same we do for home and away wins and losses
-    h_wins = 1
+    h_wins = api.get_games_won(h_team, True)
     h_losses = 2
-    g_wins = 1
+    g_wins = api.get_games_won(g_team, False)
     g_losses = 2
+
+    print("Ranks: ", h_wins, h_losses, g_wins, g_losses)
 
     #The same we do for the last three matches' end results ATTENTION: Results always habe to be from home or away teams
     #point of view!
-    h_matches = ((0,2), (0,2), (0,2))
-    g_matches = ((0,2), (0,2), (0,2))
+    h_matches = api.get_last_three_games(h_team)
+    # g_matches = api.get_last_three_games(g_team)
+    g_matches = ((4, 3), (3, 1), (2, 0))
 
+
+    print("Matches ", h_matches, g_matches)
+    result = compare_table_pos(h_rank, g_rank) + compare_home_away_strengths(h_wins, h_losses, g_wins, g_losses) + compare_runs(h_matches, g_matches)
+
+    print("Result ", result)

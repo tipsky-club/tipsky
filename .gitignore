@@ -103,3 +103,6 @@ ENV/
 
 #idea
 .idea/
+
+#api key
+api_key
