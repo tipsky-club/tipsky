@@ -217,7 +217,7 @@ if __name__ == '__main__':
     print("Ranks: ", h_rank, g_rank)
     #The same we do for home and away wins and losses
     h_wins = api.get_games_won(h_team, True)
-    h_losses = 2
+    h_losses = api.get
     g_wins = api.get_games_won(g_team, False)
     g_losses = 2
 
@@ -226,8 +226,7 @@ if __name__ == '__main__':
     #The same we do for the last three matches' end results ATTENTION: Results always habe to be from home or away teams
     #point of view!
     h_matches = api.get_last_three_games(h_team)
-    # g_matches = api.get_last_three_games(g_team)
-    g_matches = ((4, 3), (3, 1), (2, 0))
+    g_matches = api.get_last_three_games(g_team)
 
 
     print("Matches ", h_matches, g_matches)
