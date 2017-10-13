@@ -1,4 +1,4 @@
-import random
+# import random
 import api_connector as api
 
 '''
@@ -17,8 +17,8 @@ In the second phase, the result of the match is guessed.
 
 
 # This function compares the table ranks of two teams
-def compare_table_pos(h_rank, g_rank):
-    delta = h_rank - g_rank
+def compare_table_pos(home_rank, guest_rank):
+    delta = home_rank - guest_rank
 
     if delta < -3:
         return 1
@@ -29,9 +29,9 @@ def compare_table_pos(h_rank, g_rank):
 
 
 # This function compares the strengths of the teams at home or away
-def compare_home_away_strengths(h_wins, h_losses, g_wins, g_losses):
-    h_strength = h_wins - h_losses
-    g_strength = g_wins - g_losses
+def compare_home_away_strengths(home_wins, home_losses, guest_wins, guest_losses):
+    h_strength = home_wins - home_losses
+    g_strength = guest_wins - guest_losses
 
     if h_strength * g_strength >= 0:
         return 0
@@ -62,8 +62,8 @@ def decode_run(matches):
 
 # This function compares possible runs of both teams during the last three games
 # TODO: I am not quite sure if this is what I actually wanted...
-def compare_runs(h_matches, g_matches):
-    delta_runs = decode_run(h_matches) - decode_run(g_matches)
+def compare_runs(home_matches, guest_matches):
+    delta_runs = decode_run(home_matches) - decode_run(guest_matches)
 
     if delta_runs > 0:
         return 1
@@ -74,39 +74,37 @@ def compare_runs(h_matches, g_matches):
 
 
 # This function guesses an end result for a match
-def guessResult(h_matches, g_matches, outcome):
-    possibleResults = {}
+# TODO: This is not ready yet. Should be completed in the future!
+def guess_result(home_matches, guest_matches, outcome):
+    possible_results = {}
 
-    h_avg_shot_goals = (h_matches[0][0] + h_matches[1][0] + h_matches[2][0]) / 3
-    h_avg_got_goals = (h_matches[0][1] + h_matches[1][1] + h_matches[2][1]) / 3
-    g_avg_shot_goals = (g_matches[0][0] + g_matches[1][0] + g_matches[2][0]) / 3
-    g_avg_got_goals = (g_matches[0][1] + g_matches[1][1] + g_matches[2][1]) / 3
+    h_avg_shot_goals = (home_matches[0][0] + home_matches[1][0] + home_matches[2][0]) / 3
+    h_avg_got_goals = (home_matches[0][1] + home_matches[1][1] + home_matches[2][1]) / 3
+    g_avg_shot_goals = (guest_matches[0][0] + guest_matches[1][0] + guest_matches[2][0]) / 3
+    g_avg_got_goals = (guest_matches[0][1] + guest_matches[1][1] + guest_matches[2][1]) / 3
 
     avg_goals = [h_avg_shot_goals, h_avg_got_goals, g_avg_shot_goals,
-                 g_avg_got_goals]  # ((h_avg_shot_goals, g_avg_got_goals), (h_avg_got_goals, g_avg_shot_goals))
-
-    # if outcome == -1:
-    #     avg_goals = ((h_avg_got_goals, g_avg_shot_goals), (h_avg_shot_goals, g_avg_got_goals))
+                 g_avg_got_goals]
 
     # Depending on the predicted outcome diffent results are possible
     if outcome == 0:
-        possibleResults = {(0, 0): 0.0, (1, 1): 0.0, (2, 2): 0.0}
+        possible_results = {(0, 0): 0.0, (1, 1): 0.0, (2, 2): 0.0}
 
         for average in avg_goals:
             if average >= 2:
-                possibleResults[(2, 2)] += 1.0
+                possible_results[(2, 2)] += 1.0
             elif average > 1:
-                possibleResults[(2, 2)] += average - int(average)
-                possibleResults[(1, 1)] += int(average) + 1.0 - average
+                possible_results[(2, 2)] += average - int(average)
+                possible_results[(1, 1)] += int(average) + 1.0 - average
             elif average == 1:
-                possibleResults[(1, 1)] += 1.0
+                possible_results[(1, 1)] += 1.0
             elif average > 0:
-                possibleResults[(1, 1)] += average - int(average)
-                possibleResults[(0, 0)] += int(average) + 1.0 - average
+                possible_results[(1, 1)] += average - int(average)
+                possible_results[(0, 0)] += int(average) + 1.0 - average
             else:
-                possibleResults[(0, 0)] += 1.0
+                possible_results[(0, 0)] += 1.0
     else:
-        possibleResults = {(1, 0): 0.0, (2, 0): 0.0, (2, 1): 0.0, (3, 0): 0.0, (3, 1): 0.0, (3, 2): 0.0}
+        possible_results = {(1, 0): 0.0, (2, 0): 0.0, (2, 1): 0.0, (3, 0): 0.0, (3, 1): 0.0, (3, 2): 0.0}
 
         if outcome == 1:
             avg_goals = [h_avg_shot_goals, g_avg_got_goals, h_avg_got_goals, g_avg_shot_goals]
@@ -115,51 +113,50 @@ def guessResult(h_matches, g_matches, outcome):
 
         for average in avg_goals[0:2]:
             if average >= 3:
-                possibleResults[(3, 0)] += 1.0
-                possibleResults[(3, 1)] += 1.0
-                possibleResults[(3, 2)] += 1.0
+                possible_results[(3, 0)] += 1.0
+                possible_results[(3, 1)] += 1.0
+                possible_results[(3, 2)] += 1.0
             elif average > 2:
-                possibleResults[(3, 0)] += average - int(average)
-                possibleResults[(3, 1)] += average - int(average)
-                possibleResults[(3, 2)] += average - int(average)
-                possibleResults[(2, 0)] += int(average) + 1.0 - average
-                possibleResults[(2, 1)] += int(average) + 1.0 - average
+                possible_results[(3, 0)] += average - int(average)
+                possible_results[(3, 1)] += average - int(average)
+                possible_results[(3, 2)] += average - int(average)
+                possible_results[(2, 0)] += int(average) + 1.0 - average
+                possible_results[(2, 1)] += int(average) + 1.0 - average
             elif average == 2:
-                possibleResults[(2, 0)] += 1.0
-                possibleResults[(2, 1)] += 1.0
+                possible_results[(2, 0)] += 1.0
+                possible_results[(2, 1)] += 1.0
             elif average > 1:
-                possibleResults[(2, 0)] += average - int(average)
-                possibleResults[(2, 1)] += average - int(average)
-                possibleResults[(1, 0)] += int(average) + 1.0 - average
+                possible_results[(2, 0)] += average - int(average)
+                possible_results[(2, 1)] += average - int(average)
+                possible_results[(1, 0)] += int(average) + 1.0 - average
             elif average == 1:
-                possibleResults[(1, 0)] += 1.0
+                possible_results[(1, 0)] += 1.0
             elif average > 0:
-                possibleResults[(1, 0)] += average - int(average)
+                possible_results[(1, 0)] += average - int(average)
             else:
-                possibleResults[(1, 0)] += 1.0
+                possible_results[(1, 0)] += 1.0
 
         for average in avg_goals[2:4]:
             if average >= 2:
-                possibleResults[(3, 2)] += 1.0
+                possible_results[(3, 2)] += 1.0
             elif average > 1:
-                possibleResults[(3, 2)] += average - int(average)
-                possibleResults[(3, 1)] += int(average) + 1.0 - average
-                possibleResults[(2, 1)] += int(average) + 1.0 - average
+                possible_results[(3, 2)] += average - int(average)
+                possible_results[(3, 1)] += int(average) + 1.0 - average
+                possible_results[(2, 1)] += int(average) + 1.0 - average
             elif average == 1:
-                possibleResults[(3, 1)] += 1.0
-                possibleResults[(2, 1)] += 1.0
+                possible_results[(3, 1)] += 1.0
+                possible_results[(2, 1)] += 1.0
             elif average > 0:
-                possibleResults[(3, 1)] += average - int(average)
-                possibleResults[(2, 1)] += average - int(average)
-                possibleResults[(3, 0)] += int(average) + 1.0 - average
-                possibleResults[(2, 0)] += int(average) + 1.0 - average
-                possibleResults[(1, 0)] += int(average) + 1.0 - average
+                possible_results[(3, 1)] += average - int(average)
+                possible_results[(2, 1)] += average - int(average)
+                possible_results[(3, 0)] += int(average) + 1.0 - average
+                possible_results[(2, 0)] += int(average) + 1.0 - average
+                possible_results[(1, 0)] += int(average) + 1.0 - average
             else:
-                possibleResults[(3, 0)] += 1.0
-                possibleResults[(2, 0)] += 1.0
-                possibleResults[(1, 0)] += 1.0
+                possible_results[(3, 0)] += 1.0
+                possible_results[(2, 0)] += 1.0
+                possible_results[(1, 0)] += 1.0
 
-    # max(possibleResults.items(), )
     if outcome == 1:
         return 1
     else:
