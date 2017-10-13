@@ -202,6 +202,10 @@ def guessResult(h_matches, g_matches, outcome):
     #         elif int(h_shot_goals) + 1 == result[0]:
     #             possibleResults[result] += h_shot_goals - int(h_shot_goals)
 
+#This function estimates the outcome of a match
+def compute_outcome(h_team, g_team, h_rank, g_rank, h_wins, h_losses, g_wins, g_losses, h_matches, g_matches):
+    return 
+
 if __name__ == '__main__':
     #We need two teams that play against each other (Later the names of the teams are given as an input to the program.
     #For now we define them here) TODO: Change this!
